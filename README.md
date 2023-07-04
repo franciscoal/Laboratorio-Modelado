@@ -1,2 +1,9 @@
 # Laboratorio-Modelado
-Práctica laboratorio de modelado. Bases de datos documentales
+
+Entidades:
+
+Cursos  
+Lecciones  
+Autores
+
+- El que las escrituras sean poco frecuentes me permite duplicar datos.
