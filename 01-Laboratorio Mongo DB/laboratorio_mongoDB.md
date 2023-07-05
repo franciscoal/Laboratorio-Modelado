@@ -19,7 +19,9 @@ Esta es la parte mínima que tendrás que entregar para superar este laboratorio
 - Saca en una consulta cuantos alojamientos hay en España.
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+    .countDocuments({"address.country": "Spain"},
+)
 ```
 
 - Lista los 10 primeros:
@@ -27,7 +29,11 @@ Esta es la parte mínima que tendrás que entregar para superar este laboratorio
   - Sólo muestra: nombre, precio, camas y la localidad (`address.market`).
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({"address.country": "Spain"},
+      {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "localidad": "$address.market" })
+.limit(10)
+.sort({"price":1})
 ```
 
 ### Filtrando
@@ -38,21 +44,27 @@ Esta es la parte mínima que tendrás que entregar para superar este laboratorio
   - Sólo muestra: nombre, precio, camas y baños.
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({beds: 4, bathrooms:{$gt:2}},
+      {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "baños": "$bathrooms" })
 ```
 
 - Aunque estamos de viaje no queremos estar desconectados, así que necesitamos que el alojamiento también tenga conexión wifi. A los requisitos anteriores, hay que añadir que el alojamiento tenga wifi.
   - Sólo muestra: nombre, precio, camas, baños y servicios (`amenities`).
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({beds: 4, bathrooms:{$gt:2}, amenities:{$all:["Wifi"]}},
+      {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "baños": "$bathrooms", "servicios":"$amenities" })
 ```
 
 - Y bueno, un amigo trae a su perro, así que tenemos que buscar alojamientos que permitan mascota (_Pets allowed_).
   - Sólo muestra: nombre, precio, camas, baños y servicios (`amenities`).
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({beds: 4, bathrooms:{$gt:2}, amenities:{$all:["Wifi","Pets allowed"]}},
+      {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "baños": "$bathrooms", "servicios":"$amenities" })
 ```
 
 ### Operadores lógicos
@@ -61,14 +73,24 @@ Esta es la parte mínima que tendrás que entregar para superar este laboratorio
   - Sólo muestra: nombre, precio, camas, baños, rating y localidad.
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({$or: [{"address.country":"Portugal"},{"address.market":"Barcelona"}],
+      price:50,
+      "review_scores.review_scores_rating": {$gte:88}},
+    {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "baños": "$bathrooms", "rating":"$review_scores.review_scores_rating","localidad": "$address.market"})
 ```
 
 - También queremos que el huésped sea un superhost y que no tengamos que pagar depósito de seguridad
   - Sólo muestra: nombre, precio, camas, baños, rating, si el huésped es superhost, depósito de seguridad y localidad.
 
 ```js
-// Pega aquí tu consulta
+db.listingsAndReviews
+.find({$or: [{"address.country":"Portugal"},{"address.market":"Barcelona"}],
+      price:50, 
+      "review_scores.review_scores_rating": {$gte:88}, 
+      "host.host_is_superhost":true,
+       security_deposit:0},
+    {_id:0, "nombre":"$name", "precio":"$price","camas":"$beds", "baños": "$bathrooms", "rating":"$review_scores.review_scores_rating","superhost":"$host.host_is_superhost","Depósito de seguridad":"$security_deposit","localidad": "$address.market"})
 ```
 
 ### Agregaciones
